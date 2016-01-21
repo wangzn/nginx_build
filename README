@@ -7,7 +7,7 @@ wget "http://downloads.sourceforge.net/project/pcre/pcre/8.38/pcre-8.38.zip" -O 
 wget "http://prdownloads.sourceforge.net/libpng/zlib-1.2.8.tar.gz" -O zlib-1.2.8.tar.gz
 wget "https://www.openssl.org/source/old/1.0.2/openssl-1.0.2d.tar.gz"
 
-#git clone https://github.com/openssl/openssl.git
+#git clone https://github.com/openssl/openssl.git #new version compile failed
 git clone https://github.com/LuaJIT/LuaJIT.git
 git clone https://github.com/lua/lua.git
 
