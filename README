@@ -7,9 +7,14 @@ wget "http://downloads.sourceforge.net/project/pcre/pcre/8.38/pcre-8.38.zip" -O 
 wget "http://prdownloads.sourceforge.net/libpng/zlib-1.2.8.tar.gz" -O zlib-1.2.8.tar.gz
 wget "https://www.openssl.org/source/old/1.0.2/openssl-1.0.2d.tar.gz"
 
-#git clone https://github.com/openssl/openssl.git #new version compile failed
+#git clone https://github.com/openssl/openssl.git
 git clone https://github.com/LuaJIT/LuaJIT.git
+cd LuaJit; make && make install
 git clone https://github.com/lua/lua.git
 
+git clone https://github.com/openresty/lua-nginx-module.git
+git clone http://github.com/calio/form-input-nginx-module.git
+
 apt-get install libxml2 libxml2-dev libxslt-dev libgd-dev libgeoip-dev
+https://gist.githubusercontent.com/jmervine/5407622/raw/nginx_w_lua.bash#sthash.bsrJx3mU.dpuf
 
