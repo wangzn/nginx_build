@@ -19,7 +19,6 @@ basic_install() {
 
 install_luajit() {
 	git clone https://github.com/LuaJIT/LuaJIT.git
-	echo $PWD
 	cd LuaJIT; make && make install
 	[ $? ] || errorf "install luajit error" 
 	cd ..;
@@ -39,7 +38,6 @@ dl() {
 }
 
 download() {
-	echo $PWD
         mkdir -p "download"
         cd "download"
 	dl "${nginx_url}/${nginx_file}" ${nginx_file}
@@ -54,11 +52,8 @@ download() {
 }
 
 extract() {
-    echo $PWD
     for f in `ls ./download/`; do
-	echo $f
 	endwith $f ".tar.gz"
-	echo $?
         [ $? ] && tar -xzvf "download/$f" && continue
 	endwith $f ".tar"
         [ $? ] && tar -xvf "download/$f" && continue
@@ -127,7 +122,6 @@ export LUAJIT_LIB=${luajit_lib_dir:-/usr/local/lib}
 export LUAJIT_INC=${luajit_inc_dir:-/usr/local/include/luajit-2.0}
 
 nginx_file="nginx-${nginx_ver:-1.8.1}.tar.gz"
-echo $nginx_ver
 pcre_file="${pcre_ver}/pcre-${pcre_ver:-8.38}.zip"
 zlib_file="zlib-${zlib_ver:-1.2.8}.tar.gz"
 openssl_file="openssl-${openssl_ver}.tar.gz"
@@ -139,6 +133,8 @@ else
 	ts=`date +%Y%m%d_%H%M%S`
 	build_dir="build_$ts"
 fi
+
+build_dir="${build_home_dir:-.}/${build_dir}"
 
 mkdir -p $build_dir
 cd ${build_dir}
