@@ -18,7 +18,8 @@ basic_install() {
 }
 
 install_luajit() {
-	git clone https://github.com/LuaJIT/LuaJIT.git
+	#git clone https://github.com/LuaJIT/LuaJIT.git
+	git_clone "github.com/LuaJIT/LuaJIT.git"
 	cd LuaJIT; make && make install
 	[ $? ] || errorf "install luajit error" 
 	cd ..;
@@ -33,8 +34,25 @@ endwith() {
 dl() {
 	[ $# -lt 2 ] && exit 1
         file=`basename $2`
-	debugf "Download $1 to $file"
-	wget $1 -O $file
+	if [ "$uselocal" == "true" ] && [ -f "$localrepo/$file" ]; then
+		debugf "Download $1 to $file with local repo"
+		cp $localrepo/$file $file
+	else
+		debugf "Download $1 to $file with remote url"
+		wget $1 -O $file
+	fi
+}
+
+git_clone() {
+	[ $# -lt 1 ] && exit 1
+	dir=`basename $1 | sed s/\.git//g`
+	if [ "$uselocal" == "true" ] && [ -d "$localrepo/git/$dir" ]; then
+		debugf "git clone $m with local repo"
+		cp -r $localrepo/git/$dir $dir
+	else
+		debugf "git clone $m with remote git"
+		git clone "https://$1"
+	fi
 }
 
 download() {
@@ -46,8 +64,9 @@ download() {
 	dl "${openssl_url}/${openssl_file}" ${openssl_file}
         cd ..
         for m in `echo $addons` ; do
-            debugf "git clone $m"
-            git clone "https://$m"
+            #debugf "git clone $m"
+            #git clone "https://$m"
+		git_clone $m
         done
 }
 
@@ -109,7 +128,7 @@ make && make install
 }
 
 run() {
-	basic_install
+	#basic_install
 	install_luajit
 	download
 	extract
