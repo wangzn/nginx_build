@@ -89,6 +89,32 @@ addon_modules() {
 	echo "$ret"
 }
 
+mkpack() {
+	if [ "$debpack" != "true" ]; then
+		return
+	fi
+	cp -rf "$WD/pack/" "${build_dir}/"
+	cp $build_dir/nginx-${nginx_ver}/objs/nginx $build_dir/pack/usr/sbin/nginx
+	cd $build_dir
+	mkdir -p $build_dir/pack/usr/local/lib/
+	rsync -l /usr/local/lib/libluajit* $build_dir/pack/usr/local/lib/
+	control=$build_dir/pack/DEBIAN/control
+	revision=${Revision:-1}
+	linux_ver=`head -n 1 /etc/issue | awk '{print $1,$2}' | sed 's/ //g'`
+	size=`stat -c "%s" $build_dir/nginx-${nginx_ver}/objs/nginx`
+	sed -i "s/__NGX_VER__/${nginx_ver}/g" $control
+	sed -i "s/__REVISION__/${revision}/g" $control
+	sed -i "s/__LINUX_VER__/${linux_ver}/g" $control
+	sed -i "s/__NGX_INSTALLED_SIZE__/${size}/g" $control
+	find $build_dir/pack/ -type f -path $build_dir/pack/DEBIAN -prune -exec md5sum {} + > $build_dir/pack/DEBIAN/md5sums
+	dpkg -b $build_dir/pack $build_dir/nginx-megvii-${ngx_pack_ver}.deb
+	if [ $? -eq 0 ]; then
+		debugf "make deb pack ok"
+	else
+		errorf "make deb pack fail"
+	fi
+}
+
 build() {
 cd "nginx-${nginx_ver}"
 addons_module=`addon_modules`
@@ -124,18 +150,21 @@ debugf "addon modules: $addons_module"
 ${addons_module}
 
 make && make install
+cd ..
 
 }
 
 run() {
-	#basic_install
+	basic_install
 	install_luajit
 	download
 	extract
 	build
+	mkpack
 }
 
-source $PWD/conf.ini
+WD=$PWD
+source $WD/conf.ini
 
 export LUAJIT_LIB=${luajit_lib_dir:-/usr/local/lib}
 export LUAJIT_INC=${luajit_inc_dir:-/usr/local/include/luajit-2.0}
@@ -146,15 +175,15 @@ zlib_file="zlib-${zlib_ver:-1.2.8}.tar.gz"
 openssl_file="openssl-${openssl_ver}.tar.gz"
 
 
+ts=`date +%Y%m%d_%H%M%S`
 if [ ${mode:-PROD} == "DEBUG" ] ; then
 	build_dir="build_debug"
 else
-	ts=`date +%Y%m%d_%H%M%S`
 	build_dir="build_$ts"
 fi
 
-build_dir="${build_home_dir:-.}/${build_dir}"
-
+build_dir="${build_home_dir:-${WD}}/${build_dir}"
+debugf "Build nginx in $build_dir"
 mkdir -p $build_dir
 cd ${build_dir}
 
