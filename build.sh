@@ -100,6 +100,7 @@ mkpack() {
 	rsync -l /usr/local/lib/libluajit* $build_dir/pack/usr/local/lib/
 	control=$build_dir/pack/DEBIAN/control
 	revision=${Revision:-1}
+	ngx_pack_ver=$ts
 	linux_ver=`head -n 1 /etc/issue | awk '{print $1,$2}' | sed 's/ //g'`
 	size=`stat -c "%s" $build_dir/nginx-${nginx_ver}/objs/nginx`
 	sed -i "s/__NGX_VER__/${nginx_ver}/g" $control
