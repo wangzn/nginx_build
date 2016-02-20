@@ -94,7 +94,7 @@ mkpack() {
 		return
 	fi
 	cp -rf "$WD/pack/" "${build_dir}/"
-	cp $build_dir/nginx-${nginx_ver}/objs/nginx $build_dir/pack/usr/sbin/nginx
+	cp $build_dir/nginx-${nginx_ver}/objs/nginx $build_dir/pack${nginx_prefix}/sbin/nginx
 	cd $build_dir
 	mkdir -p $build_dir/pack/usr/local/lib/
 	rsync -l /usr/local/lib/libluajit* $build_dir/pack/usr/local/lib/
