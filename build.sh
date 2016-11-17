@@ -102,7 +102,7 @@ mkpack() {
 	revision=${Revision:-1}
 	ngx_pack_ver=$ts
 	linux_release=`lsb_release -r 2>/dev/null | awk '{print $2}'`
-	linux_id=`lsb_release -i 2>/dev/null | awk '{print $2}'`
+	linux_id=`lsb_release -i 2>/dev/null | awk '{print $3}'`
 	linux_ver="${linux_id}-${linux_release}"
 	size=`stat -c "%s" $build_dir/nginx-${nginx_ver}/objs/nginx`
 	sed -i "s/__NGX_VER__/${nginx_ver}/g" $control
