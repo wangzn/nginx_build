@@ -11,8 +11,8 @@ errorf() {
 
 
 basic_install() {
-	apt-get update
-	apt-get -y install git libxml2 libxml2-dev libxslt-dev libgd-dev libgeoip-dev
+	sudo apt-get update
+	sudo apt-get -y install git libxml2 libxml2-dev libxslt-dev libgd-dev libgeoip-dev
 	[ $? ] || errorf "basic install error"
 	debugf "basic package installed"
 }
@@ -20,7 +20,7 @@ basic_install() {
 install_luajit() {
 	#git clone https://github.com/LuaJIT/LuaJIT.git
 	git_clone "github.com/LuaJIT/LuaJIT.git"
-	cd LuaJIT; make && make install
+	cd LuaJIT; make && sudo make install
 	[ $? ] || errorf "install luajit error" 
 	cd ..;
 }
@@ -107,7 +107,7 @@ mkpack() {
 	sed -i "s/__REVISION__/${revision}/g" $control
 	sed -i "s/__LINUX_VER__/${linux_ver}/g" $control
 	sed -i "s/__NGX_INSTALLED_SIZE__/${size}/g" $control
-	find $build_dir/pack/ -type f -path $build_dir/pack/DEBIAN -prune -exec md5sum {} + > $build_dir/pack/DEBIAN/md5sums
+	find $build_dir/pack/ -path $build_dir/pack/DEBIAN -prune -o -type f -exec md5sum {} + > $build_dir/pack/DEBIAN/md5sums
 	dpkg -b $build_dir/pack $build_dir/nginx-megvii-${ngx_pack_ver}.deb
 	if [ $? -eq 0 ]; then
 		debugf "make deb pack ok"
@@ -150,7 +150,7 @@ debugf "addon modules: $addons_module"
 --with-zlib=../zlib-${zlib_ver}/ \
 ${addons_module}
 
-make && make install
+make && sudo make install
 cd ..
 
 }
